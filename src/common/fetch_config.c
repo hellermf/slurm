@@ -291,7 +291,11 @@ static void _init_minimal_conf_server_config(List controllers)
 
 	slurm_conf_init(filename);
 
-	close(fd);
+	# fd refers to an anonymous file that will cease to exist once all handles are closed. Purposely
+	# do not close() fd here because we want to access this "file" later and do so via the
+	# corresponding /proc/<PID>/fd/<fd-#> path. Descriptor will automatically close when process
+	# terminates per POSIX and the anonymous file will be freed then.
+
 	xfree(filename);
 }
 
